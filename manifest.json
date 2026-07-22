@@ -1,6 +1,6 @@
 {
   "name": "Sistem Booking Panel SMPN 3 Ngawen",
-  "short_name": "Booking Panel",
+  "short_name": "Espega IDP",
   "description": "Aplikasi Peminjaman Panel Interaktif SMPN 3 Ngawen",
   "start_url": "./index.html",
   "scope": "./",
