@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="id" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Interactive Digital Panel</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (via CDN untuk Rapid Development) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563EB',
+                        'primary-dark': '#1D4ED8',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- SweetAlert2 CSS & JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- FullCalendar CSS & JS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+    
+    <!-- Heroicons (via CDN) -->
+    <script src="https://unpkg.com/heroicons@2.0.18/20/solid/index.js"></script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .trans-200 { transition: all 200ms ease-in-out; }
+    </style>
+
+    <!-- PWA Settings -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="logo.png">
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col trans-200">
+
+    <!-- NAVBAR / HEADER -->
+    <header class="sticky top-0 z-30 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 px-4 py-3">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <img src="logo.png" alt="Logo Panel" class="w-10 h-10 object-contain rounded-xl">
+                <div>
+                    <h1 class="font-bold text-base md:text-lg leading-tight">IDP Booking</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">SMP Negeri 3 Ngawen</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <!-- Dark Mode Toggle -->
+                <button id="themeToggleBtn" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 trans-200">
+                    <span id="themeIcon">🌙</span>
+                </button>
+                
+                <!-- Profile / User Info -->
+                <div id="userInfo" class="text-right hidden sm:block">
+                    <span id="userName" class="block font-semibold text-sm">Guru</span>
+                    <span id="userRole" class="block text-xs text-slate-500 dark:text-slate-400">Akses Terbuka</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
+
+        <!-- STATS CARDS (GRID RESPONSIVE) -->
+        <section class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+            <!-- Card Total Booking -->
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700 shadow-soft">
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Hari Ini</p>
+                <h3 class="text-xl md:text-2xl font-bold text-primary mt-1" id="statToday">-</h3>
+            </div>
+            <!-- Card Pending -->
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700 shadow-soft">
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Pending</p>
+                <h3 class="text-xl md:text-2xl font-bold text-amber-500 mt-1" id="statPending">-</h3>
+            </div>
+            <!-- Card Disetujui -->
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700 shadow-soft">
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Disetujui</p>
+                <h3 class="text-xl md:text-2xl font-bold text-emerald-500 mt-1" id="statApproved">-</h3>
+            </div>
+            <!-- Card Total Panel -->
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700 shadow-soft">
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Total Panel</p>
+                <h3 class="text-xl md:text-2xl font-bold text-slate-700 dark:text-slate-200 mt-1" id="statPanels">-</h3>
+            </div>
+        </section>
+
+        <!-- SECTION DATA TABLE & FILTER -->
+        <section class="bg-white dark:bg-slate-800 p-4 md:p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-soft">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800 dark:text-white">Daftar Booking</h2>
+                    <p class="text-sm text-slate-500">Kelola dan cari riwayat peminjaman panel</p>
+                </div>
+                
+                <!-- Action Controls (Search & Filters) -->
+                <div class="w-full md:w-auto flex flex-col md:flex-row gap-2">
+                    <!-- Search Input -->
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </span>
+                        <input type="text" id="dtSearch" placeholder="Cari guru, panel, mapel..." class="w-full md:w-64 pl-10 pr-4 py-2 text-sm rounded-xl border border-slate-300 dark:border-slate-600 bg-transparent focus:border-primary focus:ring-1 focus:ring-primary outline-none dark:text-white">
+                    </div>
+                    
+                    <!-- Filter Status -->
+                    <select id="dtFilterStatus" class="w-full md:w-auto px-4 py-2 text-sm rounded-xl border border-slate-300 dark:border-slate-600 bg-transparent focus:border-primary outline-none dark:text-white cursor-pointer">
+                        <option value="all">Semua Status</option>
+                        <option value="approved">Disetujui</option>
+                        <option value="pending">Pending</option>
+                        <option value="rejected">Ditolak</option>
+                    </select>
+
+                    <!-- Sort -->
+                    <select id="dtSort" class="w-full md:w-auto px-4 py-2 text-sm rounded-xl border border-slate-300 dark:border-slate-600 bg-transparent focus:border-primary outline-none dark:text-white cursor-pointer">
+                        <option value="newest">Terbaru</option>
+                        <option value="oldest">Terlama</option>
+                        <option value="name_az">Nama (A-Z)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Responsive Table Wrapper -->
+            <div class="overflow-x-auto pb-4">
+                <table class="w-full text-left border-collapse whitespace-nowrap">
+                    <thead>
+                        <tr class="border-b border-slate-200 dark:border-slate-700 text-sm text-slate-500 dark:text-slate-400">
+                            <th class="py-3 px-4 font-semibold">Tanggal & Waktu</th>
+                            <th class="py-3 px-4 font-semibold">Panel</th>
+                            <th class="py-3 px-4 font-semibold">Guru & Mapel</th>
+                            <th class="py-3 px-4 font-semibold">Status</th>
+                            <th class="py-3 px-4 font-semibold text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dtTbody" class="text-sm divide-y divide-slate-100 dark:divide-slate-700">
+                        <!-- Baris tabel dirender via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination Controls -->
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 mt-4 text-sm text-slate-600 dark:text-slate-400">
+                <div class="flex items-center gap-2">
+                    <span>Tampilkan</span>
+                    <select id="dtLimit" class="rounded-lg border border-slate-300 dark:border-slate-600 bg-transparent py-1 px-2 outline-none dark:text-white cursor-pointer">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <span>data</span>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <button id="dtPrevBtn" class="px-3 py-1 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed trans-200">Sebelumnya</button>
+                    <span id="dtPageInfo" class="font-medium">Hal 1 dari 1</span>
+                    <button id="dtNextBtn" class="px-3 py-1 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed trans-200">Berikutnya</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ADAPTIVE CALENDAR AREA -->
+        <section class="bg-white dark:bg-slate-800 p-4 md:p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-soft">
+            
+            <!-- Mobile View: DatePicker + Agenda Card (Dihide di Desktop) -->
+            <div id="mobileCalendarView" class="block lg:hidden space-y-4">
+                <div class="flex items-center justify-between bg-slate-100 dark:bg-slate-700/50 p-2 rounded-xl">
+                    <button id="btnPrevDate" class="p-2 rounded-lg bg-white dark:bg-slate-800 shadow-sm">◀</button>
+                    <input type="date" id="mobileDatePicker" class="bg-transparent font-semibold text-center text-sm md:text-base focus:outline-none">
+                    <button id="btnNextDate" class="p-2 rounded-lg bg-white dark:bg-slate-800 shadow-sm">▶</button>
+                </div>
+
+                <!-- Agenda Container -->
+                <div id="mobileAgendaList" class="space-y-3">
+                    <!-- Skeleton Loader State -->
+                    <div class="animate-pulse bg-slate-100 dark:bg-slate-700 h-20 rounded-xl"></div>
+                    <div class="animate-pulse bg-slate-100 dark:bg-slate-700 h-20 rounded-xl"></div>
+                </div>
+            </div>
+
+            <!-- Desktop/Tablet View: FullCalendar (Dihide di Mobile) -->
+            <div id="desktopCalendarView" class="hidden lg:block">
+                <div id="fullCalendarContainer"></div>
+            </div>
+
+        </section>
+
+        
+
+    </main>
+
+    <!-- FLOATING ACTION BUTTON (MOBILE ONLY) -->
+    <button id="btnFAB" class="lg:hidden fixed bottom-6 right-6 bg-primary hover:bg-primary-dark text-white p-4 rounded-full shadow-lg flex items-center justify-center trans-200 active:scale-95 z-40">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+    </button>
+
+    <!-- MODAL FORM BOOKING (Hidden by default) -->
+    <div id="bookingModal" class="fixed inset-0 z-50 hidden">
+        <!-- Backdrop -->
+        <div id="modalBackdrop" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm trans-200 opacity-0"></div>
+        
+        <!-- Modal Content -->
+        <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+            <div id="modalContent" class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-md p-6 trans-200 scale-95 opacity-0 pointer-events-auto max-h-[90vh] overflow-y-auto">
+                <div class="flex justify-between items-center mb-5">
+                    <h3 class="text-xl font-bold text-slate-800 dark:text-white">Form Booking Panel</h3>
+                    <button id="btnCloseModal" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                
+                <form id="formBooking" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Tanggal</label>
+                        <input type="date" id="inputTanggal" required class="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-transparent px-4 py-2 focus:border-primary focus:ring-1 focus:ring-primary outline-none dark:text-white">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Jam Mulai</label>
+                            <input type="time" id="inputJamMulai" required class="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-transparent px-4 py-2 focus:border-primary focus:ring-1 focus:ring-primary outline-none dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Jam Selesai</label>
+                            <input type="time" id="inputJamSelesai" required class="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-transparent px-4 py-2 focus:border-primary focus:ring-1 focus:ring-primary outline-none dark:text-white">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Panel</label>
+                        <select id="inputPanel" required class="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-transparent px-4 py-2 focus:border-primary focus:ring-1 focus:ring-primary outline-none dark:text-white">
+                            <option value="">-- Pilih Panel --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nama Guru</label>
+                        <input type="text" id="inputGuru" placeholder="Contoh: Budi Santoso" required class="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-transparent px-4 py-2 focus:border-primary focus:ring-1 focus:ring-primary outline-none dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Mata Pelajaran / Keperluan</label>
+                        <input type="text" id="inputMapel" placeholder="Contoh: Matematika" required class="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-transparent px-4 py-2 focus:border-primary focus:ring-1 focus:ring-primary outline-none dark:text-white">
+                    </div>
+                    
+                    <div class="pt-4">
+                        <button type="submit" id="btnSubmitBooking" class="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-3 rounded-xl shadow-soft trans-200 flex justify-center items-center">
+                            Simpan Booking
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="./src/main.js"></script>
+
+</body>
+</html>

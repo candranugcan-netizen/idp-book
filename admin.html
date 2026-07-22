@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Panel Booking</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Konfigurasi Tailwind sama seperti index.html -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { colors: { primary: '#2563EB', 'primary-dark': '#1D4ED8' } } }
+        }
+    </script>
+    <style>
+        .trans-200 { transition: all 0.2s ease-in-out; }
+    </style>
+
+    <!-- PWA Settings -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="logo.png">
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased h-screen overflow-hidden" id="adminBody">
+
+    <!-- LAYAR LOGIN ADMIN -->
+    <div id="loginScreen" class="fixed inset-0 z-50 bg-slate-900 flex items-center justify-center trans-200">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-sm text-center">
+            <h2 class="text-2xl font-bold text-slate-800 mb-2">Login Admin</h2>
+            <p class="text-sm text-slate-500 mb-6">Masukkan PIN untuk mengakses panel kontrol</p>
+            <form id="formLogin" class="space-y-4">
+                <input type="password" id="inputPin" placeholder="Masukkan PIN..." class="w-full text-center tracking-widest text-lg rounded-xl border border-slate-300 px-4 py-3 focus:border-primary outline-none" required>
+                <button type="submit" class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 rounded-xl trans-200">
+                    Masuk
+                </button>
+                <a href="index.html" class="block text-sm text-primary hover:underline mt-4">Kembali ke Halaman Publik</a>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADMIN DASHBOARD (Hidden until logged in) -->
+    <div id="adminDashboard" class="hidden h-full flex flex-col overflow-y-auto p-4 md:p-8">
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-800">Admin Panel</h1>
+                <p class="text-slate-500">Kelola Persetujuan Booking Panel</p>
+            </div>
+            <div class="flex gap-4">
+                <a href="index.html" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-sm font-semibold trans-200">Lihat Kalender Publik</a>
+                <button id="btnLogout" class="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg text-sm font-semibold trans-200">Logout</button>
+            </div>
+        </div>
+
+        <!-- Tabel Approval -->
+        <div class="bg-white p-6 rounded-2xl shadow-soft border border-slate-200">
+            <h2 class="text-lg font-bold text-slate-800 mb-4">Menunggu Persetujuan (Pending)</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse whitespace-nowrap">
+                    <thead>
+                        <tr class="border-b text-sm text-slate-500">
+                            <th class="py-3 px-4">Tanggal & Waktu</th>
+                            <th class="py-3 px-4">Panel</th>
+                            <th class="py-3 px-4">Guru & Mapel</th>
+                            <th class="py-3 px-4 text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTbody" class="text-sm divide-y divide-slate-100">
+                        <!-- Data dirender lewat JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Module -->
+    <script type="module" src="src/admin.js"></script>
+</body>
+</html>
