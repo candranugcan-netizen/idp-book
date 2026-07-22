@@ -85,9 +85,7 @@ export const initDataTable = (allBookings) => {
                     <td class="py-3 px-4">
                         <span class="px-2.5 py-1 text-xs font-semibold rounded-lg ${badgeClass}">${statusIndo}</span>
                     </td>
-                    <td class="py-3 px-4 text-right">
-                        <button class="text-primary hover:text-primary-dark font-medium text-sm" onclick="alert('Detail ID: ${b.id}')">Detail</button>
-                    </td>
+              
                 `;
                 tbody.appendChild(tr);
             });
