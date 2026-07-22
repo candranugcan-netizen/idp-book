@@ -1,8 +1,9 @@
 {
-  "name": "Sistem Booking Panel Sekolah",
+  "name": "Sistem Booking Panel SMPN 3 Ngawen",
   "short_name": "Booking Panel",
-  "description": "Aplikasi Peminjaman Panel Interaktif Sekolah",
-  "start_url": "/index.html",
+  "description": "Aplikasi Peminjaman Panel Interaktif SMPN 3 Ngawen",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#2563eb",
@@ -12,13 +13,13 @@
       "src": "logo.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "logo.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }
