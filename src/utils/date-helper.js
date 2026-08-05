@@ -33,7 +33,7 @@ export const isJamOperasional = (tanggal, jamMulai, jamSelesai) => {
     if (hari === 0) return { valid: false, pesan: "Hari Minggu tidak dapat melakukan booking." };
     
     const batasMulai = "06:30";
-    const batasSelesai = (hari === 6) ? "12:00" : "15:30"; // Sabtu s/d 12:00
+    const batasSelesai = (hari === 6) ? "12:00" : "17:30"; // Sabtu s/d 12:00
     
     if (jamMulai < batasMulai || jamSelesai > batasSelesai) {
         return { 
