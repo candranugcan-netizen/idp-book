@@ -4,7 +4,7 @@
  */
 export const CONFIG = {
     APP_NAME: 'Aplikasi Booking Panel',
-    API_URL: 'https://script.google.com/macros/s/AKfycbyABKyMxSmhdPtE6tImNMLTqFpaVgMdRmgA1uLDH_U663tQd7pp_RCZGunLbTp8ltXGmQ/exec', // Akan diisi URL Google Apps Script pada Tahap 6
+    API_URL: 'https://script.google.com/macros/s/AKfycbw6bNT6DLOgUyJ8t2wliSPx_xeF7NuJXWfeGnWv4NMDHRWv8VppFLnRs48_ZI-xARDrwg/exec', // Akan diisi URL Google Apps Script pada Tahap 6
     OPERASIONAL: {
         BUKA: '06:30',
         TUTUP_HARI_KERJA: '15:30',
